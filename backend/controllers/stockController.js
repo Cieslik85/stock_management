@@ -1,0 +1,59 @@
+const Stock = require('../models/stockModel');
+
+exports.createStock = async (req, res) => {
+  const { product_id, quantity } = req.body;
+  try {
+    const newStock = await Stock.create(product_id, quantity);
+    res.status(201).json(newStock);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to create stock entry' });
+  }
+};
+
+exports.getAllStock = async (req, res) => {
+  try {
+    const stockItems = await Stock.getAll();
+    res.json(stockItems);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch stock data' });
+  }
+};
+
+exports.getStockById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const stock = await Stock.getById(id);
+    if (!stock) return res.status(404).json({ error: 'Stock not found' });
+    res.json(stock);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch stock by ID' });
+  }
+};
+
+exports.updateStock = async (req, res) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
+  try {
+    const updated = await Stock.update(id, quantity);
+    if (!updated) return res.status(404).json({ error: 'Stock not found' });
+    res.json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update stock' });
+  }
+};
+
+exports.deleteStock = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await Stock.remove(id);
+    if (!deleted) return res.status(404).json({ error: 'Stock not found' });
+    res.json({ message: 'Stock deleted', deleted });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to delete stock' });
+  }
+};
