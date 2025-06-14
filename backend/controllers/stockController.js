@@ -1,5 +1,6 @@
 const Stock = require('../models/stockModel');
 
+// POST /api/stock
 exports.createStock = async (req, res) => {
   const { product_id, quantity } = req.body;
   try {
@@ -10,7 +11,7 @@ exports.createStock = async (req, res) => {
     res.status(500).json({ error: 'Failed to create stock entry' });
   }
 };
-
+ // GET /api/stock
 exports.getAllStock = async (req, res) => {
   try {
     const stockItems = await Stock.getAll();
@@ -21,6 +22,7 @@ exports.getAllStock = async (req, res) => {
   }
 };
 
+// GET /api/stock/:id
 exports.getStockById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -33,6 +35,35 @@ exports.getStockById = async (req, res) => {
   }
 };
 
+// PATCH /api/stock/:id/increase
+exports.increaseStock = async (req, res) => {
+  const { id } = req.params;
+  const { amount } = req.body;
+  try {
+    const updated = await Stock.increaseStock(id, amount);
+    if (!updated) return res.status(404).json({ error: 'Stock not found' });
+    res.json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to increase stock' });
+  }
+};
+
+// PATCH /api/stock/:id/decrease
+exports.decreaseStock = async (req, res) => {
+  const { id } = req.params;
+  const { amount } = req.body;
+  try {
+    const updated = await Stock.decreaseStock(id, amount);
+    if (!updated) return res.status(404).json({ error: 'Stock not found' });
+    res.json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to decrease stock' });
+  }
+};
+
+// PUT /api/stock/:id
 exports.updateStock = async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
@@ -46,6 +77,7 @@ exports.updateStock = async (req, res) => {
   }
 };
 
+// DELETE /api/stock/:id
 exports.deleteStock = async (req, res) => {
   const { id } = req.params;
   try {
