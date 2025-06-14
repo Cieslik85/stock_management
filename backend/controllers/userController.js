@@ -39,18 +39,33 @@ exports.updateRole = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { username, email, password, role } = req.body;
 
   try {
-    const existing = await UserModel.findByEmail(email); 
+    const existing = await userModel.findByEmail(email); 
     if (existing) {
       return res.status(400).json({ error: 'Email already in use' });
     }
 
-    const newUser = await UserModel.create({ name, email, password, role });
+    const newUser = await userModel.create({ username, email, password, role });
     res.status(201).json({ message: 'User created', user: newUser });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create user' });
+  }
+};
+
+exports.update = async (req, res) => {
+  const { id } = req.params;
+  const { username, email, role } = req.body;
+
+  try {
+    const updatedUser = await userModel.update(id, username, email, role);
+    if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+
+    res.json({ message: 'User updated', user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update user' });
   }
 };
