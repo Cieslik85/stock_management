@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const pool = require('../models/db');
 
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, role = 'user' } = req.body;
   try {
     const existing = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (existing.rows.length > 0) {
@@ -12,8 +12,8 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
-      'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email',
-      [username, email, hashedPassword]
+      'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3) RETURNING id, username, email, role',
+      [username, email, hashedPassword, role]
     );
 
     res.status(201).json({ message: 'User registered', user: result.rows[0] });
@@ -33,7 +33,7 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '1d',
     });
 

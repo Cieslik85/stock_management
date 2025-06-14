@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const ProductController = require('../controllers/productController');
 const verifyToken = require('../middleware/authMiddleware');
+const permit = require('../middleware/roleMiddleware');
 
-router.post('/', verifyToken, ProductController.createProduct);
 router.get('/', verifyToken, ProductController.getAllProducts);
 router.get('/:id', verifyToken, ProductController.getProductById);
-router.put('/:id', verifyToken, ProductController.updateProduct);
-router.delete('/:id', verifyToken, ProductController.deleteProduct);
+router.post('/', verifyToken, permit('admin', 'manager'), ProductController.createProduct);
+router.put('/:id', verifyToken,  permit('admin', 'manager'), ProductController.updateProduct);
+router.delete('/:id', verifyToken,  permit('admin', 'manager'), ProductController.deleteProduct);
 
 module.exports = router;

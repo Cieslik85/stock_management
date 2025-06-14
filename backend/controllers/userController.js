@@ -37,3 +37,20 @@ exports.updateRole = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.createUser = async (req, res) => {
+  const { name, email, password, role } = req.body;
+
+  try {
+    const existing = await UserModel.findByEmail(email); 
+    if (existing) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    const newUser = await UserModel.create({ name, email, password, role });
+    res.status(201).json({ message: 'User created', user: newUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+};
