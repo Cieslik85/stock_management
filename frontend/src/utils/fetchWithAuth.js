@@ -1,7 +1,7 @@
 import apiUrl from '../config/api';
 import getAuthHeader from './authHeader';
 
-export const fetchWithAuth = async (endpoint, options = {}) => {
+const fetchWithAuth = async (endpoint, options = {}) => {
   const headers = {
     'Content-Type': 'application/json',
     ...getAuthHeader(),
@@ -17,3 +17,5 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   if (!res.ok) throw new Error(data.error || 'Request failed');
   return data;
 };
+
+export default fetchWithAuth;
