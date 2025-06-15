@@ -1,6 +1,7 @@
-// src/services/authService.js
+
 import apiUrl from '../config/api';
 
+// Login function
 export const login = async (email, password) => {
   const response = await fetch(`${apiUrl}/auth/login`, {
     method: 'POST',
