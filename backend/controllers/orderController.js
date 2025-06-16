@@ -2,20 +2,27 @@ const Order = require('../models/orderModel');
 
 // Create a new order
 exports.createOrder = async (req, res) => {
-  const { user_id, status, items } = req.body;
   try {
-    const order = await Order.create(user_id, status, items);
-    res.status(201).json(order);
-  } catch (error) {
-    console.error('Error creating order:', error);
+    const userId = req.user.id; 
+    const { items } = req.body;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Invalid order items' });
+    }
+
+    const createdOrder = await Order.createOrder(userId, items);
+    res.status(201).json(createdOrder);
+  } catch (err) {
+    console.error('Error creating order:', err);
     res.status(500).json({ error: 'Failed to create order' });
   }
 };
 
+
 // Get all orders
 exports.getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.getAll();
+    const orders = await Order.getAllOrders();
     res.json(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);

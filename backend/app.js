@@ -14,6 +14,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const stockRoutes = require('./routes/stockRoutes');
 const stockMovementRoutes = require('./routes/stockMovementRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 // const alertRoutes = require('./routes/alerts'); 
 
 // Middlewares
@@ -28,6 +29,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/stock', stockRoutes);
 app.use('/api/stock-movements', stockMovementRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/orders', orderRoutes);
 // app.use('/api/alerts', alertRoutes); // enable when implemented
 
 module.exports = app;

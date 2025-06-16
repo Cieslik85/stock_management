@@ -13,8 +13,21 @@ const fetchWithAuth = async (endpoint, options = {}) => {
     headers,
   });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
+  const contentType = res.headers.get('content-type');
+
+  // Try to parse only if response is JSON
+  let data;
+  if (contentType && contentType.includes('application/json')) {
+    data = await res.json();
+  } else {
+    const text = await res.text();
+    throw new Error(`Unexpected response: ${text}`);
+  }
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Request failed');
+  }
+
   return data;
 };
 
