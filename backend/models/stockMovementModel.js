@@ -1,11 +1,11 @@
 const db = require('./db');
 
 const create = async (movement) => {
-  const { product_id, movement_type, quantity, note } = movement;
+  const { product_id, action_type, quantity, note } = movement;
   const result = await db.query(
-    `INSERT INTO stock_movements (product_id, movement_type, quantity, note)
+    `INSERT INTO stock_movements (product_id, action_type, quantity, note)
      VALUES ($1, $2, $3, $4) RETURNING *`,
-    [product_id, movement_type, quantity, note]
+    [product_id, action_type, quantity, note]
   );
   return result.rows[0];
 };

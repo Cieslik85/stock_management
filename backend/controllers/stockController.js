@@ -1,4 +1,6 @@
 const Stock = require('../models/stockModel');
+const StockMovement = require('../models/stockMovementModel');
+
 
 // POST /api/stock
 exports.createStock = async (req, res) => {
@@ -38,10 +40,20 @@ exports.getStockById = async (req, res) => {
 // PATCH /api/stock/:id/increase
 exports.increaseStock = async (req, res) => {
   const { id } = req.params;
-  const { amount } = req.body;
+  const { amount, note } = req.body;
+
   try {
     const updated = await Stock.increaseStock(id, amount);
     if (!updated) return res.status(404).json({ error: 'Stock not found' });
+
+    // Record stock movement
+    await StockMovement.create({
+      product_id: updated.product_id,
+      action_type: 'increase',
+      quantity: amount,
+      note: note || null
+    });
+
     res.json(updated);
   } catch (error) {
     console.error(error);
@@ -49,13 +61,24 @@ exports.increaseStock = async (req, res) => {
   }
 };
 
+
 // PATCH /api/stock/:id/decrease
 exports.decreaseStock = async (req, res) => {
   const { id } = req.params;
-  const { amount } = req.body;
+  const { amount, note } = req.body;
+
   try {
     const updated = await Stock.decreaseStock(id, amount);
     if (!updated) return res.status(404).json({ error: 'Stock not found' });
+
+    // Record stock movement
+    await StockMovement.create({
+      product_id: updated.product_id,
+      action_type: 'decrease',
+      quantity: amount,
+      note: note || null
+    });
+
     res.json(updated);
   } catch (error) {
     console.error(error);
@@ -63,19 +86,31 @@ exports.decreaseStock = async (req, res) => {
   }
 };
 
+
 // PUT /api/stock/:id
 exports.updateStock = async (req, res) => {
   const { id } = req.params;
-  const { quantity } = req.body;
+  const { quantity, note } = req.body;
+
   try {
     const updated = await Stock.update(id, quantity);
     if (!updated) return res.status(404).json({ error: 'Stock not found' });
+
+    // Record as a stock movement (custom action)
+    await StockMovement.create({
+      product_id: updated.product_id,
+      action_type: 'set',
+      quantity,
+      note: note || null
+    });
+
     res.json(updated);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update stock' });
   }
 };
+
 
 // DELETE /api/stock/:id
 exports.deleteStock = async (req, res) => {

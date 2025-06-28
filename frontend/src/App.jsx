@@ -22,68 +22,78 @@ const App = () => {
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         <Route
-          element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/dashboard" element={<Dashboard />} />
-
-          <Route
-            path="/products"
             element={
-              <ProtectedRoute roles={['admin', 'manager']}>
-                <Products />
+              <ProtectedRoute>
+                <Layout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="/dashboard" element={<Dashboard />} />
 
-          <Route
-            path="/categories"
-            element={
-              <ProtectedRoute roles={['admin', 'manager']}>
-                <Categories />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/products"
+              element={
+                <ProtectedRoute roles={['admin', 'manager']}>
+                  <Products />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/stock"
-            element={
-              <ProtectedRoute roles={['admin', 'manager', 'user']}>
-                <Stock />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/categories"
+              element={
+                <ProtectedRoute roles={['admin', 'manager']}>
+                  <Categories />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/reports"
-            element={
-              <ProtectedRoute roles={['admin', 'manager']}>
-                <Reports />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/stock"
+              element={
+                <ProtectedRoute roles={['admin', 'manager', 'user']}>
+                  <Stock />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute roles={['admin', 'manager', 'user']}>
-                <Orders />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/stock/:productId"
+              element={
+                <ProtectedRoute roles={['admin', 'manager']}>
+                  <Stock />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/users"
-            element={
-              <ProtectedRoute roles={['admin']}>
-                <Users />
-              </ProtectedRoute>
-            }
-          />
-        </Route>
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute roles={['admin', 'manager']}>
+                  <Reports />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute roles={['admin', 'manager', 'user']}>
+                  <Orders />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute roles={['admin']}>
+                  <Users />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+
 
         <Route path="*" element={<NotFound />} />
       </Routes>

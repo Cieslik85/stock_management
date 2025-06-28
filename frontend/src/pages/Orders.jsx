@@ -9,6 +9,7 @@ const Orders = () => {
     { product_id: '', quantity: '' }
   ]);
   const user = getCurrentUser();
+  
 
   // Fetch orders and products
   useEffect(() => {
