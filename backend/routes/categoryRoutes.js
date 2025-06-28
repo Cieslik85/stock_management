@@ -7,8 +7,9 @@ const permit = require('../middleware/roleMiddleware');
 // CRUD routes
 router.get('/', verifyToken, CategoryController.getAll);
 router.get('/:id', verifyToken, CategoryController.getById);
-router.post('/', permit('admin', 'manager'), verifyToken, CategoryController.create);
-router.put('/:id', permit('admin', 'manager'), verifyToken, CategoryController.update);
-router.delete('/:id', permit('admin', 'manager'), verifyToken, CategoryController.remove);
+router.post('/', verifyToken, permit('admin', 'manager'), CategoryController.create);
+router.put('/:id', verifyToken, permit('admin', 'manager'), CategoryController.update);
+router.delete('/:id', verifyToken, permit('admin', 'manager'), CategoryController.remove);
+
 
 module.exports = router;

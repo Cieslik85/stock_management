@@ -42,8 +42,9 @@ exports.update = async (req, res) => {
 exports.remove = async (req, res) => {
   try {
     await categoryModel.deleteCategory(req.params.id);
-    res.status(204).send();
+    res.status(200).json({ message: 'Category deleted' }); // ✅ instead of 204
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+

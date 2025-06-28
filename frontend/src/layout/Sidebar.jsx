@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react'; // optional icons if using lucide-react
+import { getCurrentUser } from '../services/authService';
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const user = getCurrentUser();
 
   const menuItems = [
     { to: '/dashboard', label: 'Dashboard' },
@@ -12,6 +14,7 @@ const Sidebar = () => {
     { to: '/stock', label: 'Stock' },
     { to: '/reports', label: 'Reports' },
     { to: '/orders', label: 'Orders' },
+    ...(user?.role === 'admin' ? [{ to: '/users', label: 'Users' }] : [])
   ];
 
   const toggleSidebar = () => {
@@ -20,9 +23,8 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`h-screen bg-white border-r transition-all duration-200 p-4 ${
-        collapsed ? 'w-20' : 'w-64'
-      }`}
+      className={`h-screen bg-white border-r transition-all duration-200 p-4 ${collapsed ? 'w-20' : 'w-64'
+        }`}
     >
       <div className="flex justify-between items-center mb-6">
         {!collapsed && <h2 className="text-xl font-bold">Stock</h2>}
@@ -37,8 +39,7 @@ const Sidebar = () => {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex items-center ${
-                collapsed ? 'justify-center' : ''
+              `flex items-center ${collapsed ? 'justify-center' : ''
               } ${isActive ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-500'}`
             }
             title={collapsed ? item.label : ''}

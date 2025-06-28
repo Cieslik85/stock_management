@@ -10,10 +10,14 @@ const create = async (product_id, quantity) => {
 
 const getAll = async () => {
   const result = await pool.query(
-    'SELECT s.*, p.name AS product_name FROM stock s JOIN products p ON s.product_id = p.id'
+    `SELECT s.*, p.name AS product_name, p.sku 
+     FROM stock s 
+     JOIN products p ON s.product_id = p.id
+     ORDER BY p.name`
   );
   return result.rows;
 };
+
 
 const getById = async (id) => {
   const result = await pool.query('SELECT * FROM stock WHERE id = $1', [id]);
@@ -29,19 +33,19 @@ const update = async (id, quantity) => {
 };
 
 const increaseStock = async (id, amount) => {
-const result = await pool.query(
-'UPDATE stock SET quantity = quantity + $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
-[amount, id]
-);
-return result.rows[0];
+  const result = await pool.query(
+    'UPDATE stock SET quantity = quantity + $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+    [amount, id]
+  );
+  return result.rows[0];
 };
 
 const decreaseStock = async (id, amount) => {
-const result = await pool.query(
-'UPDATE stock SET quantity = quantity - $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
-[amount, id]
-);
-return result.rows[0];
+  const result = await pool.query(
+    'UPDATE stock SET quantity = quantity - $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+    [amount, id]
+  );
+  return result.rows[0];
 };
 
 const remove = async (id) => {

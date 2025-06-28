@@ -10,10 +10,10 @@ const getCategoryById = async (id) => {
   return result.rows[0];
 };
 
-const createCategory = async (name) => {
+const createCategory = async (name, description) => {
   const result = await db.query(
-    'INSERT INTO categories (name) VALUES ($1) RETURNING *',
-    [name]
+    'INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING *',
+    [name, description]
   );
   return result.rows[0];
 };

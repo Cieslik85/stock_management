@@ -19,12 +19,13 @@ exports.getById = async (req, res) => {
   }
 };
 
-exports.delete = async (req, res) => {
+exports.deleteUser = async (req, res) => {
   try {
     await userModel.deleteUser(req.params.id);
-    res.status(204).send();
+    res.status(200).json({ message: 'User deleted' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error deleting user:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -42,7 +43,7 @@ exports.createUser = async (req, res) => {
   const { username, email, password, role } = req.body;
 
   try {
-    const existing = await userModel.findByEmail(email); 
+    const existing = await userModel.findByEmail(email);
     if (existing) {
       return res.status(400).json({ error: 'Email already in use' });
     }

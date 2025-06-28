@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Categories from './pages/Categories';
+import ProductStock from './pages/ProductStock';
 import Stock from './pages/Stock';
 import Reports from './pages/Reports';
 import Orders from './pages/Orders';
@@ -13,6 +14,8 @@ import Unauthorized from './pages/Unauthorized';
 import NotFound from './pages/NotFound';
 import Layout from './layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import NewProduct from './pages/NewProduct';
+import ProductDetails from './pages/ProductDetails';
 
 const App = () => {
   return (
@@ -22,78 +25,95 @@ const App = () => {
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         <Route
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+
+          <Route
+            path="/products"
             element={
-              <ProtectedRoute>
-                <Layout />
+              <ProtectedRoute roles={['admin', 'manager']}>
+                <Products />
               </ProtectedRoute>
             }
-          >
-            <Route path="/dashboard" element={<Dashboard />} />
+          />
 
-            <Route
-              path="/products"
-              element={
-                <ProtectedRoute roles={['admin', 'manager']}>
-                  <Products />
-                </ProtectedRoute>
-              }
-            />
+          <Route
+            path="/products/:id"
+            element={
+              <ProtectedRoute roles={['admin', 'manager']}>
+                <ProductDetails />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              path="/categories"
-              element={
-                <ProtectedRoute roles={['admin', 'manager']}>
-                  <Categories />
-                </ProtectedRoute>
-              }
-            />
+          <Route
+            path="/categories"
+            element={
+              <ProtectedRoute roles={['admin', 'manager']}>
+                <Categories />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              path="/stock"
-              element={
-                <ProtectedRoute roles={['admin', 'manager', 'user']}>
-                  <Stock />
-                </ProtectedRoute>
-              }
-            />
+          <Route
+            path="/stock"
+            element={
+              <ProtectedRoute roles={['admin', 'manager', 'user']}>
+                <Stock />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              path="/stock/:productId"
-              element={
-                <ProtectedRoute roles={['admin', 'manager']}>
-                  <Stock />
-                </ProtectedRoute>
-              }
-            />
+          <Route
+            path="/stock/:productId"
+            element={
+              <ProtectedRoute roles={['admin', 'manager']}>
+                <ProductStock />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              path="/reports"
-              element={
-                <ProtectedRoute roles={['admin', 'manager']}>
-                  <Reports />
-                </ProtectedRoute>
-              }
-            />
+          <Route
+            path="/newProduct"
+            element={
+              <ProtectedRoute roles={['admin', 'manager']}>
+                <NewProduct />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              path="/orders"
-              element={
-                <ProtectedRoute roles={['admin', 'manager', 'user']}>
-                  <Orders />
-                </ProtectedRoute>
-              }
-            />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute roles={['admin', 'manager']}>
+                <Reports />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              path="/users"
-              element={
-                <ProtectedRoute roles={['admin']}>
-                  <Users />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute roles={['admin', 'manager', 'user']}>
+                <Orders />
+              </ProtectedRoute>
+            }
+          />
 
+          <Route
+            path="/users"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <Users />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
 
         <Route path="*" element={<NotFound />} />
       </Routes>

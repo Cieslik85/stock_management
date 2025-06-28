@@ -41,6 +41,16 @@ const Products = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    try {
+      await fetchWithAuth(`/products/${id}`, { method: 'DELETE' });
+      setProducts(prev => prev.filter(prod => prod.id !== id));
+    } catch (err) {
+      console.error('Error deleting product:', err);
+    }
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     try {
@@ -73,6 +83,12 @@ const Products = () => {
     <div>
       <h1 className="text-xl font-bold mb-4">Products</h1>
 
+      <button
+        onClick={() => navigate(`/newProduct`)}
+        className="text-blue-600 hover:underline"
+        >New Product
+      </button>
+
       {isAuthorized && (
         <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow mb-6">
           {/* Input fields... (same as before, minus quantity) */}
@@ -100,13 +116,13 @@ const Products = () => {
               <td className="border px-4 py-2">{prod.sku}</td>
               <td className="border px-4 py-2">${parseFloat(prod.price).toFixed(2)}</td>
               <td className="border px-4 py-2">{getStockQuantity(prod.id)}</td>
-              <td className="border px-4 py-2">
+              <td className="border px-4 py-2 flex gap-4">
                 <button
-                  onClick={() => navigate(`/stock/${prod.id}`)}
+                  onClick={() => navigate(`/products/${prod.id}`)}
                   className="text-blue-600 hover:underline"
-                >
-                  Manage Stock
-                </button>
+                  >
+                  Manage
+              </button>
               </td>
             </tr>
           ))}
