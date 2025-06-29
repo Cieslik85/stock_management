@@ -21,8 +21,9 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { name } = req.body;
-    const newCategory = await categoryModel.createCategory(name);
+    const { name, description = '' } = req.body;
+    const newCategory = await categoryModel.createCategory(name, description);
+
     res.status(201).json(newCategory);
   } catch (err) {
     res.status(500).json({ error: err.message });

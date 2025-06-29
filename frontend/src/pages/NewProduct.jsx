@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';
 
+
 const NewProduct = () => {
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ const NewProduct = () => {
     quantity: '',
     category_id: ''
   });
-
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +36,8 @@ const NewProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
     try {
       await fetchWithAuth('/products', {
         method: 'POST',
@@ -47,12 +50,25 @@ const NewProduct = () => {
       navigate('/products');
     } catch (err) {
       console.error('Error creating product:', err);
+
+      // If response includes a readable error
+      if (err.message && err.message.includes('SKU already exists')) {
+        setError('A product with this SKU already exists.');
+      } else {
+        setError('Failed to create product. Please try again.');
+      }
     }
   };
 
   return (
     <div className="p-6 bg-white rounded shadow">
       <h1 className="text-xl font-bold mb-4">Add New Product</h1>
+      {error && (
+        <div className="text-red-600 font-medium">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
 
         <div>

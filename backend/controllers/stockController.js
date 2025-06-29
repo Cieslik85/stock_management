@@ -13,7 +13,7 @@ exports.createStock = async (req, res) => {
     res.status(500).json({ error: 'Failed to create stock entry' });
   }
 };
- // GET /api/stock
+// GET /api/stock
 exports.getAllStock = async (req, res) => {
   try {
     const stockItems = await Stock.getAll();

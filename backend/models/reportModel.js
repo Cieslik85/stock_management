@@ -4,7 +4,7 @@ const pool = require('./db');
 // Fetch stock entries where quantity is below a given threshold (default: 5)
 const getLowStockItems = async (threshold = 5, startDate = null, endDate = null) => {
 
-    let query = `
+  let query = `
     SELECT s.id, p.name AS product_name, s.quantity, s.updated_at
     FROM stock s
     JOIN products p ON s.product_id = p.id

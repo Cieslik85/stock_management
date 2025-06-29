@@ -21,7 +21,7 @@ const getById = async (id) => {
 };
 
 const update = async (id, product) => {
-  const { name, sku,  description, price, category_id } = product;
+  const { name, sku, description, price, category_id } = product;
   const result = await db.query(
     `UPDATE products SET name=$1, sku=$2, description=$3, price=$4, category_id=$5
      WHERE id=$6 RETURNING *`,

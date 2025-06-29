@@ -3,7 +3,7 @@ const Order = require('../models/orderModel');
 // Create a new order
 exports.createOrder = async (req, res) => {
   try {
-    const userId = req.user.id; 
+    const userId = req.user.id;
     const { items } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {

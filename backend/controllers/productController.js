@@ -5,15 +5,19 @@ exports.createProduct = async (req, res) => {
   try {
     const { quantity, ...productData } = req.body;
 
-    // Create the product
     const newProduct = await Product.create(productData);
 
-    // Create initial stock (even if quantity is 0)
     await Stock.create(newProduct.id, quantity || 0);
 
     res.status(201).json(newProduct);
   } catch (err) {
     console.error('Error creating product:', err);
+
+    // Check for duplicate SKU error from Postgres
+    if (err.code === '23505' && err.constraint === 'products_sku_key') {
+      return res.status(400).json({ error: 'SKU already exists. Please use a unique SKU.' });
+    }
+
     res.status(500).json({ error: 'Internal server error' });
   }
 };
