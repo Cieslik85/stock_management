@@ -1,6 +1,7 @@
 import React from 'react';
 import { getCurrentUser, logout } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 
 const Topbar = () => {
   const user = getCurrentUser();
@@ -12,12 +13,15 @@ const Topbar = () => {
   };
 
   return (
-    <header className="flex justify-between items-center bg-white border-b p-4 mb-4">
-      <h1 className="text-lg font-semibold">Welcome, {user?.username || user?.name}</h1>
+    <header className="flex items-center justify-between bg-white border-b px-6 py-4 shadow-sm">
+      <h1 className="text-lg font-semibold text-gray-800">
+        Welcome, {user?.username || user?.name}
+      </h1>
       <button
         onClick={handleLogout}
-        className="text-red-600 hover:underline"
+        className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 transition-colors"
       >
+        <LogOut size={18} />
         Logout
       </button>
     </header>

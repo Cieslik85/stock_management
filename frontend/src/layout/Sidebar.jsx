@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X } from 'lucide-react'; // optional icons if using lucide-react
+import { Menu, X } from 'lucide-react';
 import { getCurrentUser } from '../services/authService';
 
 const Sidebar = () => {
@@ -12,39 +12,37 @@ const Sidebar = () => {
     { to: '/products', label: 'Products' },
     { to: '/categories', label: 'Categories' },
     { to: '/stock', label: 'Stock' },
-    { to: '/reports', label: 'Reports' },
     { to: '/orders', label: 'Orders' },
+    { to: '/reports', label: 'Reports' },
     ...(user?.role === 'admin' ? [{ to: '/users', label: 'Users' }] : [])
   ];
 
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed);
-  };
-
   return (
     <aside
-      className={`h-screen bg-white border-r transition-all duration-200 p-4 ${collapsed ? 'w-20' : 'w-64'
+      className={`h-screen bg-white border-r shadow-sm transition-all duration-300 ease-in-out flex flex-col ${collapsed ? 'w-16' : 'w-64'
         }`}
     >
-      <div className="flex justify-between items-center mb-6">
-        {!collapsed && <h2 className="text-xl font-bold">Stock</h2>}
-        <button onClick={toggleSidebar}>
+      <div className="flex items-center justify-between p-4 border-b">
+        {!collapsed && <h2 className="text-xl font-bold text-blue-600">Stock</h2>}
+        <button onClick={() => setCollapsed(!collapsed)} className="text-gray-600 hover:text-blue-500">
           {collapsed ? <Menu size={20} /> : <X size={20} />}
         </button>
       </div>
 
-      <nav className="flex flex-col gap-4">
+      <nav className="flex flex-col gap-2 p-4">
         {menuItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex items-center ${collapsed ? 'justify-center' : ''
-              } ${isActive ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-blue-500'}`
+              `flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive
+                ? 'bg-blue-100 text-blue-600'
+                : 'text-gray-700 hover:bg-gray-100 hover:text-blue-500'
+              } ${collapsed ? 'justify-center' : 'justify-start'}`
             }
             title={collapsed ? item.label : ''}
           >
-            <span>{!collapsed && item.label}</span>
+            {!collapsed && <span>{item.label}</span>}
           </NavLink>
         ))}
       </nav>
