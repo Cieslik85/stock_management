@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { getCurrentUser } from '../services/authService';
+import Button from '../components/button';
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const user = getCurrentUser();
+  const user = React.useMemo(() => getCurrentUser(), []);
 
   const menuItems = [
     { to: '/dashboard', label: 'Dashboard' },
@@ -24,9 +25,14 @@ const Sidebar = () => {
     >
       <div className="flex items-center justify-between p-4 border-b">
         {!collapsed && <h2 className="text-xl font-bold text-blue-600">Stock</h2>}
-        <button onClick={() => setCollapsed(!collapsed)} className="text-gray-600 hover:text-blue-500">
-          {collapsed ? <Menu size={20} /> : <X size={20} />}
-        </button>
+        <Button
+          color="green"
+          onClick={() => setCollapsed(!collapsed)}
+          className="p-2 min-w-0 w-8 h-8 flex items-center justify-center"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <Menu size={20} color="white" /> : <X size={20} color="white" />}
+        </Button>
       </div>
 
       <nav className="flex flex-col gap-2 p-4">

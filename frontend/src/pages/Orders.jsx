@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import fetchWithAuth from '../utils/fetchWithAuth';
 import { getCurrentUser } from '../services/authService';
 
+/**
+ * Orders component for displaying and creating orders.
+ *
+ * - Fetches and displays a list of orders and available products.
+ * - Allows users to create a new order with multiple items.
+ * - Handles form input for selecting products and quantities.
+ * - Submits new orders and updates the order list upon creation.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Orders page with order creation form and order list table.
+ */
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
@@ -9,7 +20,7 @@ const Orders = () => {
     { product_id: '', quantity: '' }
   ]);
   const user = getCurrentUser();
-  
+
 
   // Fetch orders and products
   useEffect(() => {

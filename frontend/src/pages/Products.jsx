@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';
 import { getCurrentUser } from '../services/authService';
+import Button from '../components/button';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -105,18 +106,12 @@ const Products = () => {
         />
       </div>
 
-      <button
+      <Button
+        color="green"
         onClick={() => navigate(`/newProduct`)}
-        className="text-blue-600 hover:underline"
-      >New Product
-      </button>
-
-      {isAuthorized && (
-        <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow mb-6">
-          {/* Input fields... (same as before, minus quantity) */}
-          {/* ... */}
-        </form>
-      )}
+      >
+        New Product
+      </Button>
 
       <h2 className="text-lg font-semibold mb-2">Product List</h2>
       <table className="min-w-full bg-white border text-sm">
@@ -141,12 +136,12 @@ const Products = () => {
               <td className="border px-4 py-2">{getStockQuantity(prod.id)}</td>
               <td className="border px-4 py-2">{getCategoryName(prod.category_id)}</td>
               <td className="border px-4 py-2 flex gap-4">
-                <button
+                <Button
+                  color="green"
                   onClick={() => navigate(`/products/${prod.id}`)}
-                  className="text-blue-600 hover:underline"
                 >
                   Manage
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

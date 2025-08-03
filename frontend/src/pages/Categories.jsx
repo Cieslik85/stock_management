@@ -1,6 +1,7 @@
 // src/pages/Categories.jsx
 import React, { useEffect, useState } from 'react';
 import fetchWithAuth from '../utils/fetchWithAuth';
+import Button from '../components/button';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -60,7 +61,7 @@ const Categories = () => {
           placeholder="e.g. Electronics"
           required
         />
-        <button className="bg-blue-600 text-white px-4 py-2 rounded">Add Category</button>
+        <Button color="green">Add Category</Button>
       </form>
 
       <h2 className="text-lg font-semibold mb-2">Existing Categories</h2>
@@ -68,12 +69,9 @@ const Categories = () => {
         {categories.map(cat => (
           <li key={cat.id} className="flex justify-between items-center border p-2 rounded">
             <span>{cat.name}</span>
-            <button
-              onClick={() => handleDelete(cat.id)}
-              className="text-red-600 hover:underline"
-            >
+            <Button color="red" onClick={() => handleDelete(cat.id)}>
               Delete
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
