@@ -20,10 +20,12 @@ const Stock = () => {
         fetchStock();
     }, []);
 
-    const filteredItems = stockItems.filter(item =>
-        item.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.sku.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredItems = stockItems
+        .filter(item => !item.archived) // Exclude archived products
+        .filter(item =>
+            item.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.sku.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
     return (
         <div className="p-6 bg-white rounded shadow">

@@ -10,10 +10,10 @@ const create = async (product_id, quantity) => {
 
 const getAll = async () => {
   const result = await pool.query(
-    `SELECT s.*, p.name AS product_name, p.sku 
-     FROM stock s 
+    `SELECT s.*, p.name AS product_name, p.sku, p.archived
+     FROM stock s
      JOIN products p ON s.product_id = p.id
-     ORDER BY p.name`
+     WHERE p.archived = FALSE OR p.archived IS NULL`
   );
   return result.rows;
 };

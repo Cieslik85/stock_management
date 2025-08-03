@@ -1,8 +1,18 @@
 const Order = require('../models/orderModel');
+const Product = require('../models/productModel');
 
 // Create a new order
 exports.createOrder = async (req, res) => {
   try {
+    const { product_id, ...rest } = req.body;
+    const product = await Product.getById(product_id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    if (product.archived) {
+      return res.status(400).json({ error: 'Cannot order an archived product' });
+    }
+
     const userId = req.user.id;
     const { items } = req.body;
 
@@ -14,7 +24,7 @@ exports.createOrder = async (req, res) => {
     res.status(201).json(createdOrder);
   } catch (err) {
     console.error('Error creating order:', err);
-    res.status(500).json({ error: 'Failed to create order' });
+    res.status(500).json({ error: err.message });
   }
 };
 
