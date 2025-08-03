@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import fetchWithAuth from '../utils/fetchWithAuth';
 import { getCurrentUser } from '../services/authService';
+import Button from '../components/Button';
 
 /**
  * Orders component for displaying and creating orders.

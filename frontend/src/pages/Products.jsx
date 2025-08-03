@@ -96,7 +96,7 @@ const Products = () => {
     <div>
       <h1 className="text-xl font-bold mb-4">Products</h1>
 
-      <div className="mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <input
           type="text"
           placeholder="Search by name or SKU..."
@@ -104,14 +104,15 @@ const Products = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border p-2 w-full sm:w-1/2"
         />
-      </div>
 
-      <Button
-        color="green"
-        onClick={() => navigate(`/newProduct`)}
-      >
-        New Product
-      </Button>
+
+        <Button
+          color="green"
+          onClick={() => navigate(`/newProduct`)}
+        >
+          New Product
+        </Button>
+      </div>
 
       <h2 className="text-lg font-semibold mb-2">Product List</h2>
       <table className="min-w-full bg-white border text-sm">

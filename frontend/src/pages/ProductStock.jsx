@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';
+import Button from '../components/Button';
 
 
 const Stock = () => {
@@ -12,6 +13,7 @@ const Stock = () => {
   const [newQty, setNewQty] = useState('');
   const [newQtyNote, setNewQtyNote] = useState('');
   const [movements, setMovements] = useState([]);
+  const [showAll, setShowAll] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -72,6 +74,12 @@ const Stock = () => {
     }
   };
 
+  // Sort movements by date descending (most recent first)
+  const sortedMovements = [...movements].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
+  const displayedMovements = showAll ? sortedMovements : sortedMovements.slice(0, 5);
+
   if (!product) return <p>Loading...</p>;
 
   return (
@@ -111,18 +119,18 @@ const Stock = () => {
             </div>
 
             <div className="flex gap-4">
-              <button
+              <Button
                 onClick={() => updateQty('increase')}
-                className="bg-green-600 text-white px-4 py-2 rounded"
+                color="green"
               >
                 Increase
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => updateQty('decrease')}
-                className="bg-red-600 text-white px-4 py-2 rounded"
+                color="red"
               >
                 Decrease
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -149,12 +157,12 @@ const Stock = () => {
               />
             </div>
 
-            <button
+            <Button
               onClick={handleSetQty}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
+              color="blue"
             >
               Set Quantity
-            </button>
+            </Button>
           </div>
         </>
       )}
@@ -162,26 +170,38 @@ const Stock = () => {
       {/* Movement History */}
       <h2 className="text-lg font-semibold mb-2">Stock Movement History</h2>
       {movements.length > 0 ? (
-        <table className="min-w-full bg-white border text-sm">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2">Type</th>
-              <th className="border px-4 py-2">Quantity</th>
-              <th className="border px-4 py-2">Note</th>
-              <th className="border px-4 py-2">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {movements.map(m => (
-              <tr key={m.id}>
-                <td className="border px-4 py-2 capitalize">{m.action_type}</td>
-                <td className="border px-4 py-2">{m.quantity}</td>
-                <td className="border px-4 py-2">{m.note || '-'}</td>
-                <td className="border px-4 py-2">{new Date(m.created_at).toLocaleString()}</td>
+        <>
+          <table className="min-w-full bg-white border text-sm">
+            <thead>
+              <tr>
+                <th className="border px-4 py-2">Type</th>
+                <th className="border px-4 py-2">Quantity</th>
+                <th className="border px-4 py-2">Note</th>
+                <th className="border px-4 py-2">Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {displayedMovements.map(m => (
+                <tr key={m.id}>
+                  <td className="border px-4 py-2 capitalize">{m.action_type}</td>
+                  <td className="border px-4 py-2">{m.quantity}</td>
+                  <td className="border px-4 py-2">{m.note || '-'}</td>
+                  <td className="border px-4 py-2">{new Date(m.created_at).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {movements.length > 5 && (
+            <div className="mt-2 flex justify-end">
+              <Button
+                color="blue"
+                onClick={() => setShowAll(!showAll)}
+              >
+                {showAll ? 'Show Less' : 'View All History'}
+              </Button>
+            </div>
+          )}
+        </>
       ) : (
         <p className="text-sm text-gray-600">No movement history available.</p>
       )}

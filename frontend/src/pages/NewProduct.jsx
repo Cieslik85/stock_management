@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';
-
+import Button from '../components/button';
 
 const NewProduct = () => {
   const [categories, setCategories] = useState([]);
@@ -141,19 +141,20 @@ const NewProduct = () => {
         </div>
 
         <div className="flex gap-4">
-          <button
+          <Button
+            color="green"
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+
           >
             Create Product
-          </button>
-          <button
+          </Button>
+          <Button
+            color="red"
             type="button"
             onClick={() => navigate('/products')}
-            className="border px-4 py-2 rounded"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
     </div>

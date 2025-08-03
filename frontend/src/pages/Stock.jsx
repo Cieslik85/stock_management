@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';
+import Button from '../components/Button';
 
 const Stock = () => {
     const [stockItems, setStockItems] = useState([]);
@@ -56,11 +57,10 @@ const Stock = () => {
                                 {item.updated_at ? new Date(item.updated_at).toLocaleString() : '-'}
                             </td>
                             <td className="border px-4 py-2">
-                                <Link
-                                    to={`/stock/${item.product_id}`}
-                                    className="text-blue-600 hover:underline"
-                                >
-                                    Manage
+                                <Link to={`/stock/${item.product_id}`}>
+                                    <Button color="yellow">
+                                        Manage
+                                    </Button>
                                 </Link>
                             </td>
                         </tr>

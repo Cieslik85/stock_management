@@ -6,6 +6,10 @@ backend/node_modules/
 # Build output
 dist/
 build/
+frontend/dist/
+frontend/build/
+backend/dist/
+backend/build/
 
 # Environment variables
 .env
@@ -15,7 +19,30 @@ backend/.env
 # Logs
 *.log
 logs/
+frontend/logs/
+backend/logs/
 
 # System files
 .DS_Store
 Thumbs.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+*.swp
+*.bak
+
+# Test coverage
+coverage/
+frontend/coverage/
+backend/coverage/
+
+# Misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

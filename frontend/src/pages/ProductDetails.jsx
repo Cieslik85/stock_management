@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';
+import ConfirmDialog from '../components/ConfirmDialog';
+import Button from '../components/button';
 
 const ProductDetails = () => {
   const { id } = useParams(); // product ID
@@ -21,6 +23,11 @@ const ProductDetails = () => {
   const [editing, setEditing] = useState(false);
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
+
+  const [deleteError, setDeleteError] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [archiveError, setArchiveError] = useState('');
+  const [archiveSuccess, setArchiveSuccess] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,13 +91,29 @@ const ProductDetails = () => {
     }
   };
 
+  // Change handleDelete to only perform the delete, not open the dialog
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    setDeleteError('');
     try {
       await fetchWithAuth(`/products/${id}`, { method: 'DELETE' });
+      setConfirmOpen(false);
       navigate('/products');
     } catch (err) {
-      console.error('Error deleting product:', err);
+      setDeleteError(err.message);
+      setConfirmOpen(false);
+    }
+  };
+
+  const handleArchive = async () => {
+    setArchiveError('');
+    setArchiveSuccess('');
+    try {
+      await fetchWithAuth(`/products/${id}/archive`, { method: 'PATCH' });
+      setArchiveSuccess('Product archived successfully.');
+      // Optionally, update UI or redirect
+    } catch (err) {
+      setArchiveError('Error archiving product.');
+      console.error('Error archiving product:', err);
     }
   };
 
@@ -180,39 +203,40 @@ const ProductDetails = () => {
         <h2 className="text-lg font-semibold mb-2">Stock</h2>
         <p><strong>Current Quantity:</strong> {stock ? stock.quantity : 'N/A'}</p>
 
-        {stock && (
-          <div className="mt-4 space-y-3">
-            <input
-              type="number"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              placeholder="Amount"
-              className="border p-2 w-full"
-            />
-            <input
-              type="text"
-              value={note}
-              onChange={e => setNote(e.target.value)}
-              placeholder="Note (optional)"
-              className="border p-2 w-full"
-            />
-            <div className="flex gap-4">
-              <button onClick={() => handleStockChange('increase')} className="bg-green-600 text-white px-4 py-2 rounded">
-                Increase
-              </button>
-              <button onClick={() => handleStockChange('decrease')} className="bg-red-600 text-white px-4 py-2 rounded">
-                Decrease
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+        {/* --- Delete Product --- */}
+        <div className="mt-10">
+          <Button
+            color="red"
+            onClick={() => setConfirmOpen(true)}
+          >
+            Delete Product
+          </Button>
+        </div>
 
-      {/* --- Delete Product --- */}
-      <div className="mt-10">
-        <button onClick={handleDelete} className="bg-red-600 text-white px-4 py-2 rounded">
-          Delete Product
-        </button>
+        <ConfirmDialog
+          open={confirmOpen}
+          title="Delete Product"
+          message="Are you sure you want to delete this product? This action cannot be undone."
+          onConfirm={handleDelete}
+          onCancel={() => setConfirmOpen(false)}
+        />
+
+        {/* This will always show below the Delete button, even after dialog closes */}
+        {deleteError && (
+          <div className="mt-4 text-red-600 font-semibold">{deleteError}</div>
+        )}
+        {archiveError && (
+          <div className="mt-4 text-red-600 font-semibold">{archiveError}</div>
+        )}
+        {archiveSuccess && (
+          <div className="mt-4 text-green-600 font-semibold">{archiveSuccess}</div>
+        )}
+
+        <div className="mt-4">
+          <Button color="yellow" onClick={handleArchive}>
+            Archive Product
+          </Button>
+        </div>
       </div>
     </div>
   );
