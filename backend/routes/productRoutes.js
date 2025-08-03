@@ -6,8 +6,9 @@ const permit = require('../middleware/roleMiddleware');
 
 router.get('/', verifyToken, ProductController.getAllProducts);
 router.get('/:id', verifyToken, ProductController.getProductById);
+router.patch('/:id/archive', verifyToken, permit('admin', 'manager'), ProductController.archiveProduct);
 router.post('/', verifyToken, permit('admin', 'manager'), ProductController.createProduct);
-router.put('/:id', verifyToken,  permit('admin', 'manager'), ProductController.updateProduct);
-router.delete('/:id', verifyToken,  permit('admin', 'manager'), ProductController.deleteProduct);
+router.put('/:id', verifyToken, permit('admin', 'manager'), ProductController.updateProduct);
+router.delete('/:id', verifyToken, permit('admin', 'manager'), ProductController.deleteProduct);
 
 module.exports = router;

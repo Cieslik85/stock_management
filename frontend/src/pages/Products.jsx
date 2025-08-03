@@ -6,6 +6,8 @@ import Button from '../components/button';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [showArchived, setShowArchived] = useState(false);
+
   const [stock, setStock] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -39,6 +41,15 @@ const Products = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const url = `/products${showArchived ? '?showArchived=true' : ''}`;
+      const data = await fetchWithAuth(url);
+      setProducts(data);
+    };
+    fetchProducts();
+  }, [showArchived]);
 
   // const handleChange = (field, value) => {
   //   setFormData(prev => ({ ...prev, [field]: value }));
@@ -114,6 +125,16 @@ const Products = () => {
         </Button>
       </div>
 
+      <label className="flex items-center mb-4">
+        <input
+          type="checkbox"
+          checked={showArchived}
+          onChange={e => setShowArchived(e.target.checked)}
+          className="mr-2"
+        />
+        Show archived products
+      </label>
+
       <h2 className="text-lg font-semibold mb-2">Product List</h2>
       <table className="min-w-full bg-white border text-sm">
         <thead>
@@ -124,6 +145,7 @@ const Products = () => {
             <th className="border px-4 py-2">Price</th>
             <th className="border px-4 py-2">Quantity</th>
             <th className="border px-4 py-2">Category</th>
+            <th className="border px-4 py-2">Archived</th> {/* Added column */}
             <th className="border px-4 py-2">Actions</th>
           </tr>
         </thead>
@@ -136,6 +158,13 @@ const Products = () => {
               <td className="border px-4 py-2">${parseFloat(prod.price).toFixed(2)}</td>
               <td className="border px-4 py-2">{getStockQuantity(prod.id)}</td>
               <td className="border px-4 py-2">{getCategoryName(prod.category_id)}</td>
+              <td className="border px-4 py-2">
+                {prod.archived ? (
+                  <span className="text-red-600 font-semibold">Yes</span>
+                ) : (
+                  <span className="text-green-700">No</span>
+                )}
+              </td>
               <td className="border px-4 py-2 flex gap-4">
                 <Button
                   color="green"

@@ -10,8 +10,12 @@ const create = async (product) => {
   return result.rows[0];
 };
 
-const getAll = async () => {
-  const result = await db.query('SELECT * FROM products');
+const getAll = async (showArchived = false) => {
+  let query = 'SELECT * FROM products';
+  if (!showArchived) {
+    query += ' WHERE archived = FALSE OR archived IS NULL';
+  }
+  const result = await db.query(query);
   return result.rows;
 };
 
@@ -35,10 +39,19 @@ const remove = async (id) => {
   return result.rows[0];
 };
 
+const archive = async (id) => {
+  const result = await db.query(
+    `UPDATE products SET archived = TRUE WHERE id = $1 RETURNING *`,
+    [id]
+  );
+  return result.rows[0];
+};
+
 module.exports = {
   create,
   getAll,
   getById,
   update,
-  remove
+  remove,
+  archive
 };

@@ -24,8 +24,9 @@ exports.createProduct = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const products = await Product.getAll();
-    res.status(200).json(products);
+    const showArchived = req.query.showArchived === 'true';
+    const products = await Product.getAll(showArchived);
+    res.json(products);
   } catch (err) {
     console.error('Error fetching products:', err);
     res.status(500).json({ error: 'Internal server error' });
@@ -68,5 +69,15 @@ exports.deleteProduct = async (req, res) => {
     }
     // Otherwise, send a generic error
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.archiveProduct = async (req, res) => {
+  try {
+    const archived = await Product.archive(req.params.id);
+    if (!archived) return res.status(404).json({ error: 'Product not found' });
+    res.status(200).json({ message: 'Product archived', product: archived });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to archive product' });
   }
 };
