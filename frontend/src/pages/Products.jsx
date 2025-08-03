@@ -1,3 +1,9 @@
+/**
+ * Products Page
+ * Displays a list of products with search, add, and manage features.
+ * Includes a toggle to show/hide archived products.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';

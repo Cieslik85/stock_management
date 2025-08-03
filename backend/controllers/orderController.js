@@ -1,7 +1,15 @@
+/**
+ * Order Controller
+ * Handles HTTP requests related to orders.
+ */
+
 const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 
-// Create a new order
+/**
+ * Create a new order.
+ * Validates that products are not archived before creating the order.
+ */
 exports.createOrder = async (req, res) => {
   try {
     const { product_id, ...rest } = req.body;

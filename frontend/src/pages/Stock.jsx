@@ -1,12 +1,20 @@
+/**
+ * Stock Page
+ * Displays a table of stock items for non-archived products.
+ * Allows searching and managing stock for each product.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';
 import Button from '../components/Button';
 
 const Stock = () => {
+    // State for stock items and search term
     const [stockItems, setStockItems] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
+    // Fetches stock data on mount
     useEffect(() => {
         const fetchStock = async () => {
             try {
@@ -20,6 +28,7 @@ const Stock = () => {
         fetchStock();
     }, []);
 
+    // Filters out archived products
     const filteredItems = stockItems
         .filter(item => !item.archived) // Exclude archived products
         .filter(item =>
@@ -27,6 +36,7 @@ const Stock = () => {
             item.sku.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
+    // Renders a table with product info and manage button
     return (
         <div className="p-6 bg-white rounded shadow">
             <h1 className="text-xl font-bold mb-4">Stock Overview</h1>
