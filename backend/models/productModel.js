@@ -11,9 +11,13 @@ const create = async (product) => {
 };
 
 const getAll = async (showArchived = false) => {
-  let query = 'SELECT * FROM products';
+  let query = `
+    SELECT p.*, s.quantity
+    FROM products p
+    LEFT JOIN stock s ON p.id = s.product_id
+  `;
   if (!showArchived) {
-    query += ' WHERE archived = FALSE OR archived IS NULL';
+    query += ' WHERE p.archived = FALSE OR p.archived IS NULL';
   }
   const result = await db.query(query);
   return result.rows;

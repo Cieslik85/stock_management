@@ -12,7 +12,7 @@ const create = async (movement) => {
 
 const getAll = async () => {
   const result = await db.query(`
-    SELECT sm.*, p.name AS product_name, u.username AS user_name
+    SELECT sm.*, p.name AS product_name, p.sku AS sku, u.username AS user_name
     FROM stock_movements sm
     JOIN products p ON sm.product_id = p.id
     LEFT JOIN users u ON sm.user_id = u.id

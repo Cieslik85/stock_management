@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import fetchWithAuth from '../utils/fetchWithAuth';
 import Button from '../components/Button';
 
 
 const Stock = () => {
   const { productId } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [stockEntry, setStockEntry] = useState(null);
   const [amount, setAmount] = useState('');
@@ -14,19 +15,25 @@ const Stock = () => {
   const [newQtyNote, setNewQtyNote] = useState('');
   const [movements, setMovements] = useState([]);
   const [showAll, setShowAll] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
 
   const fetchData = async () => {
     try {
-      const [productRes, stockRes, movementsRes] = await Promise.all([
+      const [productRes, stockRes, movementsRes, productsRes] = await Promise.all([
         fetchWithAuth(`/products/${productId}`),
         fetchWithAuth('/stock'),
-        fetchWithAuth(`/stock-movements/product/${productId}`)
+        fetchWithAuth(`/stock-movements/product/${productId}`),
+        fetchWithAuth('/products')
       ]);
 
       setProduct(productRes);
       const match = stockRes.find(s => s.product_id.toString() === productId.toString());
       setStockEntry(match || null);
       setMovements(movementsRes);
+      setAllProducts(productsRes);
     } catch (err) {
       console.error('Error loading stock data:', err);
     }
@@ -35,6 +42,19 @@ const Stock = () => {
   useEffect(() => {
     fetchData();
   }, [productId]);
+
+  // Search logic for switching products
+  useEffect(() => {
+    if (!searchTerm) {
+      setSearchResults([]);
+      return;
+    }
+    const results = allProducts.filter(prod =>
+      prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prod.sku.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setSearchResults(results);
+  }, [searchTerm, allProducts]);
 
   const updateQty = async (type) => {
     if (!stockEntry || !amount) return;
@@ -80,10 +100,38 @@ const Stock = () => {
   );
   const displayedMovements = showAll ? sortedMovements : sortedMovements.slice(0, 5);
 
+
   if (!product) return <p>Loading...</p>;
 
   return (
     <div className="p-4">
+      {/* Product Search Box */}
+      <form
+        className="flex items-center max-w-sm mx-auto mb-4"
+        onSubmit={e => e.preventDefault()}
+        autoComplete="off"
+      >
+        <label htmlFor="simple-search" className="sr-only">Search</label>
+        <div className="relative w-full">
+          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <svg className="w-4 h-4 text-gray-500" aria-hidden="true" fill="none" viewBox="0 0 20 20">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="simple-search"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+            placeholder="Search by name or SKU..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            required
+          />
+        </div>
+
+      </form>
+
       <h1 className="text-xl font-bold mb-4">Manage Stock: {product.name}</h1>
 
       <div className="mb-4 bg-white p-4 rounded shadow">

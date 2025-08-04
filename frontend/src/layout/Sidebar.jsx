@@ -24,7 +24,7 @@ const Sidebar = () => {
         }`}
     >
       <div className="flex items-center justify-between p-4 border-b">
-        {!collapsed && <h2 className="text-xl font-bold text-blue-600">Stock</h2>}
+        {!collapsed && <h2 className="text-xl font-bold text-blue-600">Forest Rack</h2>}
         <Button
           color="green"
           onClick={() => setCollapsed(!collapsed)}

@@ -9,6 +9,7 @@ const Categories = () => {
   const [name, setName] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [toDeleteId, setToDeleteId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchCategories = async () => {
     try {
@@ -70,6 +71,31 @@ const Categories = () => {
           required
         />
         <Button color="green">Add Category</Button>
+      </form>
+
+      <form
+        className="flex items-center max-w-sm mx-auto mb-4"
+        onSubmit={e => e.preventDefault()}
+        autoComplete="off"
+      >
+        <label htmlFor="simple-search" className="sr-only">Search</label>
+        <div className="relative w-full">
+          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <svg className="w-4 h-4 text-gray-500" aria-hidden="true" fill="none" viewBox="0 0 20 20">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="simple-search"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+            placeholder="Search by name or SKU..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            required
+          />
+        </div>
       </form>
 
       <h2 className="text-lg font-semibold mb-2">Existing Categories</h2>
