@@ -16,6 +16,7 @@ import Layout from './layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import NewProduct from './pages/NewProduct';
 import ProductDetails from './pages/ProductDetails';
+import Landing from './pages/Landing';
 
 const App = () => {
   return (
@@ -115,6 +116,7 @@ const App = () => {
           />
         </Route>
 
+        <Route path="/" element={<Landing />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
