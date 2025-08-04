@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@/components/button';
 
 const bgStyle = {
-    backgroundImage: 'url("/login-bg.png")', // Adjust path if needed
+    backgroundImage: 'url("/login-bg.png")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     minHeight: '100vh',

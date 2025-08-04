@@ -4,7 +4,11 @@ const StockMovement = require('../models/stockMovementModel');
 
 exports.createStockMovement = async (req, res) => {
   try {
-    const movement = await StockMovement.create(req.body);
+    const movementData = {
+      ...req.body,
+      user_id: req.user.id, // assuming authentication middleware sets req.user
+    };
+    const movement = await StockMovement.create(movementData);
     res.status(201).json(movement);
   } catch (err) {
     console.error('Error creating stock movement:', err);

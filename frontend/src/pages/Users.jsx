@@ -1,6 +1,7 @@
 // src/pages/Users.jsx
 import React, { useEffect, useState } from 'react';
 import fetchWithAuth from '../utils/fetchWithAuth';
+import Button from '@/components/Button';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -134,9 +135,9 @@ const Users = () => {
           </select>
         </div>
 
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+        <Button type="submit" color="green">
           {editingUserId ? 'Update User' : 'Add User'}
-        </button>
+        </Button>
       </form>
 
       <h2 className="text-lg font-semibold mb-2">All Users</h2>
@@ -164,18 +165,18 @@ const Users = () => {
                   : '-'}
               </td>
               <td className="border px-4 py-2 flex gap-2">
-                <button
+                <Button
                   onClick={() => handleEdit(user)}
-                  className="text-yellow-600 hover:underline"
+                  color="yellow"
                 >
                   Edit
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleDelete(user.id)}
-                  className="text-red-600 hover:underline"
+                  color="red"
                 >
                   Delete
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

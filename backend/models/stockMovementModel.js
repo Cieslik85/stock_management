@@ -1,20 +1,21 @@
 const db = require('./db');
 
 const create = async (movement) => {
-  const { product_id, action_type, quantity, note } = movement;
+  const { product_id, action_type, quantity, note, user_id } = movement;
   const result = await db.query(
-    `INSERT INTO stock_movements (product_id, action_type, quantity, note)
-     VALUES ($1, $2, $3, $4) RETURNING *`,
-    [product_id, action_type, quantity, note]
+    `INSERT INTO stock_movements (product_id, action_type, quantity, note, user_id)
+     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [product_id, action_type, quantity, note, user_id]
   );
   return result.rows[0];
 };
 
 const getAll = async () => {
   const result = await db.query(`
-    SELECT sm.*, p.name AS product_name
+    SELECT sm.*, p.name AS product_name, u.username AS user_name
     FROM stock_movements sm
     JOIN products p ON sm.product_id = p.id
+    LEFT JOIN users u ON sm.user_id = u.id
     ORDER BY sm.created_at DESC
   `);
   return result.rows;

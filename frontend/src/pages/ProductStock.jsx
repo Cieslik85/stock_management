@@ -176,7 +176,7 @@ const Stock = () => {
               <tr>
                 <th className="border px-4 py-2">Type</th>
                 <th className="border px-4 py-2">Quantity</th>
-                <th className="border px-4 py-2">Note</th>
+                <th className="border px-4 py-2">Comment</th>
                 <th className="border px-4 py-2">Date</th>
               </tr>
             </thead>
