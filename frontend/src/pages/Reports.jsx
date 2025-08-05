@@ -89,7 +89,7 @@ const Reports = () => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="border border-gray-200 px-4 py-2">SKU</th>
-                  <th className="border border-gray-200 px-4 py-2">Product</th>
+                  <th className="border border-gray-200 px-4 py-2">Name</th>
                   <th className="border border-gray-200 px-4 py-2">Type</th>
                   <th className="border border-gray-200 px-4 py-2">Quantity</th>
                   <th className="border border-gray-200 px-4 py-2">User</th>
@@ -104,7 +104,7 @@ const Reports = () => {
                     <td className="border border-gray-200 px-4 py-2">{mv.action_type}</td>
                     <td className="border border-gray-200 px-4 py-2">{mv.quantity}</td>
                     <td className="border border-gray-200 px-4 py-2">{mv.user_name}</td>
-                    <td className="border border-gray-200 px-4 py-2">{new Date(mv.date).toLocaleString()}</td>
+                    <td className="border border-gray-200 px-4 py-2">{new Date(mv.created_at).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -150,8 +150,8 @@ const Reports = () => {
             <table className="min-w-full text-sm border border-gray-200">
               <thead>
                 <tr className="bg-gray-50">
-                  <th className="border border-gray-200 px-4 py-2">Name</th>
                   <th className="border border-gray-200 px-4 py-2">SKU</th>
+                  <th className="border border-gray-200 px-4 py-2">Name</th>
                   <th className="border border-gray-200 px-4 py-2">Stock</th>
                   <th className="border border-gray-200 px-4 py-2">Archived</th>
                 </tr>
@@ -159,8 +159,8 @@ const Reports = () => {
               <tbody className="divide-y divide-gray-200">
                 {filteredProducts.map(prod => (
                   <tr key={prod.id}>
-                    <td className="border border-gray-200 px-4 py-2">{prod.name}</td>
                     <td className="border border-gray-200 px-4 py-2">{prod.sku}</td>
+                    <td className="border border-gray-200 px-4 py-2">{prod.name}</td>
                     <td className="border border-gray-200 px-4 py-2">{prod.quantity}</td>
                     <td className="border border-gray-200 px-4 py-2">{prod.archived ? 'Yes' : 'No'}</td>
                   </tr>

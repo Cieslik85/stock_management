@@ -51,7 +51,8 @@ exports.increaseStock = async (req, res) => {
       product_id: updated.product_id,
       action_type: 'increase',
       quantity: amount,
-      note: note || null
+      note: note || null,
+      user_id: req.user.id
     });
 
     res.json(updated);
