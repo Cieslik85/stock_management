@@ -8,6 +8,8 @@ const Reports = () => {
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState('stock');
   const [searchTerm, setSearchTerm] = useState('');
+  const [limit, setLimit] = useState(20);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchWithAuth('/stock-movements').then(setStockMovements);
@@ -15,6 +17,8 @@ const Reports = () => {
     fetchWithAuth('/products').then(setProducts);
   }, []);
 
+
+  // Filtering
   const filteredProducts = products.filter(prod =>
     prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     prod.sku.toLowerCase().includes(searchTerm.toLowerCase())
@@ -24,6 +28,30 @@ const Reports = () => {
   (mv.product_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     mv.sku?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const filteredOrders = orders.filter(order =>
+  (order.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.status?.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  // Pagination/limit
+  const totalProductPages = Math.max(1, Math.ceil(filteredProducts.length / limit));
+  const totalStockPages = Math.max(1, Math.ceil(filteredStockMovements.length / limit));
+  const totalOrderPages = Math.max(1, Math.ceil(filteredOrders.length / limit));
+
+  // Reset page to 1 if searchTerm or limit changes
+  useEffect(() => { setPage(1); }, [searchTerm, limit, activeTab]);
+
+  const getVisible = (arr, totalPages) => {
+    const start = (page - 1) * limit;
+    return arr.slice(start, start + limit);
+  };
+
+  const visibleProducts = getVisible(filteredProducts, totalProductPages);
+  const visibleStockMovements = getVisible(filteredStockMovements, totalStockPages);
+  const visibleOrders = getVisible(filteredOrders, totalOrderPages);
+
+  const limitOptions = [20, 40, 60, 100, 200];
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
@@ -84,6 +112,32 @@ const Reports = () => {
       {activeTab === 'stock' && (
         <section className="mb-10">
           <h3 className="text-xl font-semibold mb-2">Stock Movement Report</h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-gray-600">
+              Showing {visibleStockMovements.length} of {filteredStockMovements.length} filtered, {stockMovements.length} total records
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="limit-stock" className="text-sm">Show</label>
+              <select
+                id="limit-stock"
+                className="border rounded px-2 py-1 text-sm"
+                value={limit}
+                onChange={e => setLimit(Number(e.target.value))}
+              >
+                {limitOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+              <span className="text-sm">records</span>
+            </div>
+          </div>
+          <div className="flex justify-end mb-2">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={totalStockPages}
+            />
+          </div>
           <div className="bg-white rounded shadow p-4 mb-4">
             <table className="min-w-full text-sm border border-gray-200">
               <thead>
@@ -97,7 +151,7 @@ const Reports = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredStockMovements.map(mv => (
+                {visibleStockMovements.map(mv => (
                   <tr key={mv.id}>
                     <td className="border border-gray-200 px-4 py-2">{mv.sku}</td>
                     <td className="border border-gray-200 px-4 py-2">{mv.product_name}</td>
@@ -110,6 +164,13 @@ const Reports = () => {
               </tbody>
             </table>
           </div>
+          <div className="flex justify-end mb-2">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={totalStockPages}
+            />
+          </div>
         </section>
       )}
 
@@ -117,6 +178,32 @@ const Reports = () => {
       {activeTab === 'orders' && (
         <section className="mb-10">
           <h3 className="text-xl font-semibold mb-2">Orders Report</h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-gray-600">
+              Showing {visibleOrders.length} of {filteredOrders.length} filtered, {orders.length} total records
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="limit-orders" className="text-sm">Show</label>
+              <select
+                id="limit-orders"
+                className="border rounded px-2 py-1 text-sm"
+                value={limit}
+                onChange={e => setLimit(Number(e.target.value))}
+              >
+                {limitOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+              <span className="text-sm">records</span>
+            </div>
+          </div>
+          <div className="flex justify-end mb-2">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={totalOrderPages}
+            />
+          </div>
           <div className="bg-white rounded shadow p-4 mb-4">
             <table className="min-w-full text-sm border border-gray-200">
               <thead>
@@ -128,7 +215,7 @@ const Reports = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {orders.map(order => (
+                {visibleOrders.map(order => (
                   <tr key={order.id}>
                     <td className="border border-gray-200 px-4 py-2">{new Date(order.date).toLocaleString()}</td>
                     <td className="border border-gray-200 px-4 py-2">{order.user_name}</td>
@@ -139,6 +226,13 @@ const Reports = () => {
               </tbody>
             </table>
           </div>
+          <div className="flex justify-end mb-2">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={totalOrderPages}
+            />
+          </div>
         </section>
       )}
 
@@ -146,6 +240,32 @@ const Reports = () => {
       {activeTab === 'products' && (
         <section>
           <h3 className="text-xl font-semibold mb-2">Product Report</h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-gray-600">
+              Showing {visibleProducts.length} of {filteredProducts.length} filtered, {products.length} total records
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="limit-products" className="text-sm">Show</label>
+              <select
+                id="limit-products"
+                className="border rounded px-2 py-1 text-sm"
+                value={limit}
+                onChange={e => setLimit(Number(e.target.value))}
+              >
+                {limitOptions.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+              <span className="text-sm">records</span>
+            </div>
+          </div>
+          <div className="flex justify-end mb-2">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={totalProductPages}
+            />
+          </div>
           <div className="bg-white rounded shadow p-4 mb-4">
             <table className="min-w-full text-sm border border-gray-200">
               <thead>
@@ -157,7 +277,7 @@ const Reports = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredProducts.map(prod => (
+                {visibleProducts.map(prod => (
                   <tr key={prod.id}>
                     <td className="border border-gray-200 px-4 py-2">{prod.sku}</td>
                     <td className="border border-gray-200 px-4 py-2">{prod.name}</td>
@@ -168,10 +288,52 @@ const Reports = () => {
               </tbody>
             </table>
           </div>
+          <div className="flex justify-end mb-2">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={totalProductPages}
+            />
+          </div>
         </section>
       )}
     </div>
   );
 };
+
+
+// Pagination component (move outside Reports)
+function Pagination({ page, setPage, totalPages }) {
+  if (totalPages <= 1) return null;
+  const maxButtons = 5;
+  let start = Math.max(1, page - Math.floor(maxButtons / 2));
+  let end = Math.min(totalPages, start + maxButtons - 1);
+  if (end - start < maxButtons - 1) start = Math.max(1, end - maxButtons + 1);
+
+  const pageNumbers = [];
+  for (let i = start; i <= end; i++) pageNumbers.push(i);
+
+  return (
+    <div className="flex items-center gap-1">
+      <button
+        className="px-2 py-1 border rounded disabled:opacity-50"
+        onClick={() => setPage(page - 1)}
+        disabled={page === 1}
+      >Prev</button>
+      {pageNumbers.map(num => (
+        <button
+          key={num}
+          className={`px-2 py-1 border rounded ${num === page ? 'bg-blue-500 text-white' : ''}`}
+          onClick={() => setPage(num)}
+        >{num}</button>
+      ))}
+      <button
+        className="px-2 py-1 border rounded disabled:opacity-50"
+        onClick={() => setPage(page + 1)}
+        disabled={page === totalPages}
+      >Next</button>
+    </div>
+  );
+}
 
 export default Reports;
