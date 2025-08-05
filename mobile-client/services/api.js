@@ -1,0 +1,13 @@
+import axios from 'axios';
+
+const API_URL = 'http://192.168.1.10:5000'; // e.g., http://192.168.1.10:5000
+
+export const login = (email, password) =>
+    axios.post(`${API_URL}/auth/login`, { email, password });
+
+export const fetchProducts = (token) =>
+    axios.get(`${API_URL}/products`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+// Add more API functions as needed
