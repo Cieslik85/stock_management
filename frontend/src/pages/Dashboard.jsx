@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import fetchWithAuth from '../utils/fetchWithAuth';
 import { getCurrentUser } from '../services/authService';
-import { Pie, Bar, Line } from 'react-chartjs-2';
+import { StockTable, StockPieChart, StockBarChart, StockLineChart } from '../components/Charts';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -114,51 +114,10 @@ const Dashboard = () => {
     <div>
       <h2>Stock Overview</h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
-        {/* Table with search and limit */}
-        <div>
-          <h3>Stock Table</h3>
-          <input
-            type="text"
-            placeholder="Search product..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="border rounded px-2 py-1 mb-2 w-full"
-          />
-          <table className="min-w-full text-sm border border-gray-200">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-200 px-4 py-2">Product</th>
-                <th className="border border-gray-200 px-4 py-2">Quantity</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {tableRows.map(item => (
-                <tr key={item.id}>
-                  <td className="border border-gray-200 px-4 py-2">{item.product_name}</td>
-                  <td className="border border-gray-200 px-4 py-2">{item.quantity}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {filteredStock.length > 20 && (
-            <div className="text-xs text-gray-500 mt-1">Showing top 20 of {filteredStock.length} products. Use search to filter.</div>
-          )}
-        </div>
-        {/* Pie Chart: top 10 + Other */}
-        <div>
-          <h3>Stock Distribution</h3>
-          <Pie data={pieData} />
-        </div>
-        {/* Bar Chart: top 5 */}
-        <div>
-          <h3>Top Products</h3>
-          <Bar data={barData} />
-        </div>
-        {/* Line Chart: top 3 */}
-        <div>
-          <h3>Stock Trend (Top 3)</h3>
-          <Line data={lineData} />
-        </div>
+        <StockTable tableRows={tableRows} search={search} setSearch={setSearch} filteredStock={filteredStock} />
+        <StockPieChart pieData={pieData} />
+        <StockBarChart barData={barData} />
+        <StockLineChart lineData={lineData} />
       </div>
     </div>
   );
