@@ -1,34 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import React from 'react';
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import { fetchProducts } from '../services/api';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+const menuItems = [
+    { name: 'Dashboard', icon: 'view-dashboard', screen: 'Dashboard' },
+    { name: 'Products', icon: 'cube-outline', screen: 'Products' },
+    { name: 'Orders', icon: 'cart-outline', screen: 'Orders' },
+    { name: 'Categories', icon: 'shape-outline', screen: 'Categories' },
+    { name: 'Stock', icon: 'warehouse', screen: 'Stock' },
+    { name: 'Product Stock', icon: 'cube-scan', screen: 'ProductStock' },
+    { name: 'Reports', icon: 'file-chart-outline', screen: 'Reports' },
+    { name: 'Users', icon: 'account-group-outline', screen: 'Users' },
+];
 
 export default function HomeScreen({ navigation }) {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const loadProducts = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const token = await SecureStore.getItemAsync('token');
-                if (!token) {
-                    navigation.replace('Login');
-                    return;
-                }
-                const res = await fetchProducts(token);
-                setProducts(res.data);
-            } catch (err) {
-                setError('Failed to load products');
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadProducts();
-    }, []);
-
     const handleLogout = async () => {
         await SecureStore.deleteItemAsync('token');
         navigation.replace('Login');
@@ -36,25 +22,20 @@ export default function HomeScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Product List</Text>
+            <Text style={styles.title}>Main Menu</Text>
+            <View style={styles.menuGrid}>
+                {menuItems.map(item => (
+                    <TouchableOpacity
+                        key={item.name}
+                        style={styles.menuItem}
+                        onPress={() => navigation.navigate(item.screen)}
+                    >
+                        <Icon name={item.icon} size={40} color="#2563eb" style={{ marginBottom: 8 }} />
+                        <Text style={styles.menuText}>{item.name}</Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
             <Button title="Logout" onPress={handleLogout} />
-            {loading ? (
-                <ActivityIndicator size="large" style={{ marginTop: 32 }} />
-            ) : error ? (
-                <Text style={styles.error}>{error}</Text>
-            ) : (
-                <FlatList
-                    data={products}
-                    keyExtractor={item => item.id?.toString() || item.sku}
-                    renderItem={({ item }) => (
-                        <View style={styles.item}>
-                            <Text style={styles.name}>{item.name}</Text>
-                            <Text style={styles.sku}>SKU: {item.sku}</Text>
-                            <Text style={styles.qty}>Stock: {item.quantity}</Text>
-                        </View>
-                    )}
-                />
-            )}
         </View>
     );
 }
@@ -64,38 +45,37 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 24,
         backgroundColor: '#f8fafc',
+        alignItems: 'center',
     },
     title: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 16,
+        marginBottom: 24,
         textAlign: 'center',
     },
-    error: {
-        color: 'red',
-        marginTop: 32,
-        textAlign: 'center',
+    menuGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        marginBottom: 32,
     },
-    item: {
+    menuItem: {
+        width: 120,
+        height: 120,
         backgroundColor: '#fff',
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 12,
+        borderRadius: 16,
+        margin: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
         shadowColor: '#000',
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 2,
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        elevation: 3,
     },
-    name: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    sku: {
-        fontSize: 14,
-        color: '#555',
-    },
-    qty: {
-        fontSize: 14,
-        color: '#333',
+    menuText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#2563eb',
+        textAlign: 'center',
     },
 });
