@@ -19,6 +19,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarEle
 
 const Dashboard = () => {
   const [stock, setStock] = useState([]);
+  const [stockMovements, setStockMovements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
@@ -26,19 +27,22 @@ const Dashboard = () => {
   const user = getCurrentUser();
 
   useEffect(() => {
-    const fetchStock = async () => {
+    const fetchData = async () => {
       try {
-        const data = await fetchWithAuth('/stock');
-        setStock(data);
+        const [stockData, movementData] = await Promise.all([
+          fetchWithAuth('/stock'),
+          fetchWithAuth('/stock-movements'),
+        ]);
+        setStock(stockData);
+        setStockMovements(movementData);
       } catch (err) {
-        console.error('Error loading stock:', err.message);
-        setError('Failed to load stock data.');
+        console.error('Error loading dashboard data:', err.message);
+        setError('Failed to load dashboard data.');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchStock();
+    fetchData();
   }, []);
 
   if (loading) return <p>Loading stock...</p>;
