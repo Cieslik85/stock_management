@@ -10,4 +10,17 @@ export const fetchProducts = (token) =>
         headers: { Authorization: `Bearer ${token}` }
     });
 
-// Add more API functions as needed
+export const fetchStock = (token) =>
+    axios.get(`${API_URL}/api/stock`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+export const fetchCategories = (token) =>
+    axios.get(`${API_URL}/api/categories`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+export const fetchStockMovements = (token) =>
+    axios.get(`${API_URL}/api/stock-movements`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
