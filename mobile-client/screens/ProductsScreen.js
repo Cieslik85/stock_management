@@ -1,50 +1,89 @@
 
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, TextInput, Button } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { fetchProducts } from '../services/api';
 
-export default function ProductsScreen() {
+export default function ProductsScreen({ navigation }) {
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [search, setSearch] = useState('');
+
+    // Load products when screen is focused
+    useFocusEffect(
+        useCallback(() => {
+            let isActive = true;
+            const loadProducts = async () => {
+                setLoading(true);
+                setError(null);
+                try {
+                    const token = await SecureStore.getItemAsync('token');
+                    if (!token) throw new Error('No token found');
+                    const res = await fetchProducts(token);
+                    if (isActive) {
+                        // Sort products alphabetically by name
+                        const sorted = [...res.data].sort((a, b) => a.name.localeCompare(b.name));
+                        setProducts(sorted);
+                        setFilteredProducts(sorted);
+                    }
+                } catch (err) {
+                    if (isActive) setError(err.message || 'Failed to load products');
+                } finally {
+                    if (isActive) setLoading(false);
+                }
+            };
+            loadProducts();
+            return () => { isActive = false; };
+        }, [])
+    );
 
     useEffect(() => {
-        const loadProducts = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const token = await SecureStore.getItemAsync('token');
-                if (!token) throw new Error('No token found');
-                const res = await fetchProducts(token);
-                setProducts(res.data);
-            } catch (err) {
-                setError(err.message || 'Failed to load products');
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadProducts();
-    }, []);
+        if (!search) {
+            setFilteredProducts(products);
+        } else {
+            setFilteredProducts(
+                products.filter(
+                    p =>
+                        p.name.toLowerCase().includes(search.toLowerCase()) ||
+                        p.sku.toLowerCase().includes(search.toLowerCase())
+                )
+            );
+        }
+    }, [search, products]);
 
     const renderItem = ({ item }) => (
-        <View style={styles.item}>
+        <TouchableOpacity
+            style={styles.item}
+            onPress={() => navigation.navigate('ManageProduct', { product: item })}
+        >
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.sku}>SKU: {item.sku}</Text>
             <Text style={styles.qty}>Stock: {item.quantity}</Text>
-        </View>
+        </TouchableOpacity>
     );
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Products</Text>
+            <View style={styles.topBar}>
+                <TextInput
+                    style={styles.searchBox}
+                    placeholder="Search by name or SKU"
+                    value={search}
+                    onChangeText={setSearch}
+                />
+                <Button title="Add Product" onPress={() => navigation.navigate('AddProduct')} />
+            </View>
             {loading ? (
                 <ActivityIndicator size="large" style={{ marginTop: 32 }} />
             ) : error ? (
                 <Text style={styles.error}>{error}</Text>
             ) : (
                 <FlatList
-                    data={products}
+                    data={filteredProducts}
                     keyExtractor={item => item.id?.toString() || item.sku}
                     renderItem={renderItem}
                     contentContainerStyle={{ paddingBottom: 24 }}
@@ -70,6 +109,23 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: 32,
         textAlign: 'center',
+    },
+    topBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+        gap: 8,
+    },
+    searchBox: {
+        flex: 1,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        fontSize: 16,
+        marginRight: 8,
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
     },
     item: {
         backgroundColor: '#fff',

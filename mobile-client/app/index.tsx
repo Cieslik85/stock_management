@@ -1,3 +1,5 @@
+
+import ManageProductScreen from '../screens/ManageProductScreen';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WelcomeScreen from '../screens/WelcomeScreen';
@@ -39,7 +41,9 @@ export default function App() {
       <Stack.Screen name="Stock" component={StockScreen} options={{ title: 'Stock' }} />
       <Stack.Screen name="ProductStock" component={ProductStockScreen} options={{ title: 'Product Stock' }} />
       <Stack.Screen name="Reports" component={ReportsScreen} options={{ title: 'Reports' }} />
-      <Stack.Screen name="Users" component={UsersScreen} options={{ title: 'Users' }} />
+    <Stack.Screen name="Users" component={UsersScreen} options={{ title: 'Users' }} />
+    <Stack.Screen name="ManageProduct" component={ManageProductScreen} options={{ title: 'Edit Product' }} />
+    <Stack.Screen name="AddProduct" component={require('../screens/AddProductScreen').default} options={{ title: 'Add Product' }} />
     </Stack.Navigator>
   );
 }

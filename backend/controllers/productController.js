@@ -1,5 +1,6 @@
 const Product = require('../models/productModel');
 const Stock = require('../models/stockModel');
+const db = require('../models/db');
 
 exports.createProduct = async (req, res) => {
   try {
@@ -46,8 +47,21 @@ exports.getProductById = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const updatedProduct = await Product.update(req.params.id, req.body);
+    const { quantity, ...productData } = req.body;
+    // Update product fields
+    const updatedProduct = await Product.update(req.params.id, productData);
     if (!updatedProduct) return res.status(404).json({ error: 'Product not found' });
+
+    // Update stock quantity if provided
+    if (typeof quantity !== 'undefined') {
+      // Find the stock row for this product
+      const stockRows = await db.query('SELECT id FROM stock WHERE product_id = $1', [req.params.id]);
+      if (stockRows.rows.length > 0) {
+        const stockId = stockRows.rows[0].id;
+        await Stock.update(stockId, quantity);
+      }
+    }
+
     res.status(200).json(updatedProduct);
   } catch (err) {
     console.error('Error updating product:', err);
