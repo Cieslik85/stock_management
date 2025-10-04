@@ -14,7 +14,7 @@ export default function LoginScreen({ navigation }) {
             const res = await login(email, password);
             const token = res.data.token;
             await SecureStore.setItemAsync('token', token);
-            navigation.replace('Home'); // Navigate to Home screen after login
+            navigation.replace('Home', { username: res.data.username }); // Navigate to Home screen after login
         } catch (err) {
             Alert.alert('Login Failed', err.response?.data?.message || 'Invalid credentials');
         } finally {

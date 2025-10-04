@@ -1,7 +1,8 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from 'axios';
 
 const menuItems = [
     { name: 'Dashboard', icon: 'view-dashboard', screen: 'Dashboard' },
@@ -15,6 +16,29 @@ const menuItems = [
 ];
 
 export default function HomeScreen({ navigation }) {
+    const [username, setUsername] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            setLoading(true);
+            try {
+                const token = await SecureStore.getItemAsync('token');
+                if (!token) return;
+                // Get user info from /api/auth/me or similar endpoint
+                const res = await axios.get('http://10.0.2.2:5000/api/auth/me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setUsername(res.data.username || res.data.email || 'User');
+            } catch (err) {
+                setUsername(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUser();
+    }, []);
+
     const handleLogout = async () => {
         await SecureStore.deleteItemAsync('token');
         navigation.replace('Login');
@@ -23,6 +47,11 @@ export default function HomeScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Main Menu</Text>
+            {loading ? (
+                <ActivityIndicator size="small" style={{ marginBottom: 16 }} />
+            ) : (
+                <Text style={styles.username}>Welcome, {username || 'User'}!</Text>
+            )}
             <View style={styles.menuGrid}>
                 {menuItems.map(item => (
                     <TouchableOpacity
@@ -50,7 +79,14 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 24,
+        marginBottom: 8,
+        textAlign: 'center',
+    },
+    username: {
+        fontSize: 18,
+        fontWeight: '500',
+        marginBottom: 16,
+        color: '#2563eb',
         textAlign: 'center',
     },
     menuGrid: {

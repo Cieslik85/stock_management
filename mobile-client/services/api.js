@@ -6,7 +6,7 @@ export const login = (email, password) =>
     axios.post(`${API_URL}/api/auth/login`, { email, password });
 
 export const fetchProducts = (token) =>
-    axios.get(`${API_URL}/products`, {
+    axios.get(`${API_URL}/api/products`, {
         headers: { Authorization: `Bearer ${token}` }
     });
 
